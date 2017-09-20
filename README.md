@@ -26,18 +26,9 @@ dependencies {
 
 基础
 ----
-* orientation 
-    horizontal
-    vertical
+* orientation  horizontal/vertical
 * elevation
-* gravity
-    fill
-    left
-    top
-    right
-    bottom
-    center_horizontal
-    center_vertical
+* gravity  fill/left/top/right/bottom/center_horizontal/center_vertical
 * changeDataMode
     internal
     external
