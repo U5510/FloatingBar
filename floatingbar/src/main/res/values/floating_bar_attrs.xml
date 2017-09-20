@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FloatingBar">
+
+        <attr name="orientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+
+        <attr name="gravity" format="integer">
+            <enum name="fill" value="0" />
+            <enum name="left" value="1" />
+            <enum name="top" value="2" />
+            <enum name="right" value="3" />
+            <enum name="bottom" value="4" />
+            <enum name="center_horizontal" value="5" />
+            <enum name="center_vertical" value="6" />
+        </attr>
+
+        <attr name="itemColor" format="color" />
+
+        <attr name="itemColorSelected" format="color" />
+
+        <attr name="itemPaddingLeft" format="dimension" />
+
+        <attr name="itemPaddingTop" format="dimension" />
+
+        <attr name="itemPaddingRight" format="dimension" />
+
+        <attr name="itemPaddingBottom" format="dimension" />
+
+        <attr name="itemPaddingLR" format="dimension" />
+
+        <attr name="itemPaddingTB" format="dimension" />
+
+        <attr name="itemPadding" format="dimension" />
+
+        <attr name="itemSize" format="dimension" />
+
+        <attr name="customBodyEnabled" format="boolean" />
+
+        <attr name="bodyColor" format="color" />
+
+        <attr name="elevation" format="dimension" />
+
+        <attr name="changeDataMode" format="enum">
+            <enum name="internal" value="1" />
+            <enum name="external" value="2" />
+        </attr>
+
+
+    </declare-styleable>
+</resources>
