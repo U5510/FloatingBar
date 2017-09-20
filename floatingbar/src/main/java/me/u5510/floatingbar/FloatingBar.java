@@ -732,6 +732,13 @@ public class FloatingBar extends View {
     // TODO: 2017/9/17
 
     /**
+     * 设置Gravity
+     */
+    public void setGravity(Gravity gravity) {
+        this.gravity = gravity;
+    }
+
+    /**
      * 设置选中的item
      */
     public void setItemSelected(int itemSelected) {
@@ -784,7 +791,7 @@ public class FloatingBar extends View {
 
     // TODO: 2017/9/17 enum
 
-    private enum Gravity {
+    public enum Gravity {
 
         /**
          * 填充，在此效果下，子项的间距值无效。
@@ -951,8 +958,8 @@ public class FloatingBar extends View {
     }
 
     public void addFloatingButtonAll(List<FloatingButton> fbs) {
-        for (int i = 0; i < fbs.size(); i++) {
-            addFloatingButton(getItemSize() - 1, fbs.get(i));
+        for (FloatingButton fb : fbs) {
+            addFloatingButton(fb);
         }
     }
 
@@ -965,30 +972,34 @@ public class FloatingBar extends View {
 
     }
 
+    /**
+     * 删除列表中的所有相同的
+     */
+    public void removeFloatingButton(FloatingButton fb) {
+        List<Integer> same = new ArrayList<>();
+        for (int i = 0; i < getItemSize(); i++) {
+            if (getItem(i).equals(fb)) {
+                same.add(i);
+                break;
+            }
+        }
+        if (same.size() != 0) {
+            for (Integer i : same) {
+                removeFloatingButton(i);
+                notifyItemRemoved(i);
+            }
+        }
+    }
+
+    /**
+     * 清空
+     */
     public void clear() {
         if (dataMode == DataMode.INTERNAL) {
             itemList.clear();
             notifyDataChanged();
         } else e(DataMode.INTERNAL);
 
-    }
-
-    public void removeFloatingButton(FloatingButton fb) {
-        if (dataMode == DataMode.INTERNAL) {
-            int a = -1;
-            for (int i = 0; i < getItemSize(); i++) {
-                if (getItem(i).equals(fb)) {
-                    a = i;
-                    break;
-                }
-            }
-            if (a != -1) {
-                itemList.remove(a);
-                notifyItemRemoved(a);
-            }
-        } else {
-            e(DataMode.INTERNAL);
-        }
     }
 
     public void setItemList(List<FloatingButton> fbs) {
