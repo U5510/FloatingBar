@@ -32,7 +32,7 @@ class BodyAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public boolean onDataChanged(boolean addOrSubtract, int index) {
+    public boolean onDataChanged(ChangedType type, int index) {
         expectationBody = getBar().getBodyRect();
         isEquals = false;
         getBar().getHandler().sendEmptyMessageDelayed(1, 1);
@@ -73,32 +73,40 @@ class BodyAnimEffectDrawer extends EffectDrawer {
         int r = body.right;
         int b = body.bottom;
         int _r = getBar().getRadius();
-        int p = 1; //z轴影子的偏移量
+        int p = 1; //绘制投影的偏移量
+
+        boolean isOrientation = getBar().isOrientation();
 
         if (getBar().isCustomBodyEnabled()) {
             throw new FloatingBarException("尚未实现");
         } else {
-            if (getBar().isOrientation()) {
-                //画阴影
-                canvas.drawArc(l + p, t + p, l + _r * 2 - p, b - p, 90, 180, false, zPaint);
-                canvas.drawArc(r - _r * 2 + p, t + p, r - p, b - p, 270, 180, false, zPaint);
-                canvas.drawRect(l + _r + p, t + p, r - _r - p, b - p, zPaint);
-                //画布局
-                canvas.drawArc(l, t, l + _r * 2, b, 90, 180, true, paint);
-                canvas.drawArc(r - _r * 2, t, r, b, 270, 180, true, paint);
-                canvas.drawRect(l + _r, t, r - _r, b, paint);
-                return true;
-
-            } else {
-                //画阴影
-                canvas.drawArc(l + p, t + p, r - p, t + _r * 2 - p, 180, 180, false, zPaint);
-                canvas.drawArc(l + p, b - _r * 2 + p, r - p, b - p, 0, 180, false, zPaint);
-                canvas.drawRect(l + p, t + _r + p, r - p, b - _r - p, zPaint);
-                //画布局
-                canvas.drawArc(l, t, r, t + _r * 2, 180, 180, true, paint);
-                canvas.drawArc(l, b - _r * 2, r, b, 0, 180, true, paint);
-                canvas.drawRect(l, t + _r, r, b - _r, paint);
-                return true;
+            switch (getBar().getBodyStyle()) {
+                case Rect:
+                    canvas.drawRect(l + p, t + p, r - p, b - p, zPaint);
+                    canvas.drawRect(l, t, r, b, paint);
+                    return true;
+                case Normal:
+                default:
+                    if (isOrientation) {
+                        //画阴影
+                        canvas.drawArc(l + p, t + p, l + _r * 2 - p, b - p, 90, 180, false, zPaint);
+                        canvas.drawArc(r - _r * 2 + p, t + p, r - p, b - p, 270, 180, false, zPaint);
+                        canvas.drawRect(l + _r + p, t + p, r - _r - p, b - p, zPaint);
+                        //画布局
+                        canvas.drawArc(l, t, l + _r * 2, b, 90, 180, true, paint);
+                        canvas.drawArc(r - _r * 2, t, r, b, 270, 180, true, paint);
+                        canvas.drawRect(l + _r, t, r - _r, b, paint);
+                    } else {
+                        //画阴影
+                        canvas.drawArc(l + p, t + p, r - p, t + _r * 2 - p, 180, 180, false, zPaint);
+                        canvas.drawArc(l + p, b - _r * 2 + p, r - p, b - p, 0, 180, false, zPaint);
+                        canvas.drawRect(l + p, t + _r + p, r - p, b - _r - p, zPaint);
+                        //画布局
+                        canvas.drawArc(l, t, r, t + _r * 2, 180, 180, true, paint);
+                        canvas.drawArc(l, b - _r * 2, r, b, 0, 180, true, paint);
+                        canvas.drawRect(l, t + _r, r, b - _r, paint);
+                    }
+                    return true;
             }
         }
     }
@@ -117,6 +125,21 @@ class BodyAnimEffectDrawer extends EffectDrawer {
      */
     private void initBodyRect() {
         if (body == null) body = getBar().getBodyRect();
+    }
+
+    public enum BodyStyle {
+
+        /**
+         * 两边绘制圆弧中间矩形
+         */
+        Normal,
+
+        /**
+         * 直角矩形
+         */
+        Rect
+
+
     }
 
 

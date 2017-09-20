@@ -19,7 +19,28 @@ dependencies {
     compile 'com.github.U5510:FloatingBar:1.0.1'
 }
 ```
-  
+
+一个最常规的例子:
+----
+xml
+```xml
+<me.u5510.floatingbar.FloatingBar
+    android:id="@+id/fb"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    app:orientation="horizontal"
+    app:changeDataMode="internal" />
+```
+
+java
+```java
+FloatingBar fb = (FloatingBar)FindViewById(R.id.fb);
+
+FloatingButton btn = new FloatingButton(int src, String tag,OnItemClickListener listener);
+
+fb.addFloatingButton(btn);
+```
   
 属性:
 ====

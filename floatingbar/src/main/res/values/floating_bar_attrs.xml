@@ -48,6 +48,11 @@
             <enum name="external" value="2" />
         </attr>
 
+        <attr name="bodyStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="rect" value="1"/>
+        </attr>
+
 
     </declare-styleable>
 </resources>

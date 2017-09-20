@@ -50,10 +50,10 @@ abstract class EffectDrawer {
      * 触发条件
      * 监听数据改变
      *
-     * @param addOrSubtract 模式：原数据是增加了还是减少了 true:增加
-     * @param index         需要更改的下标
+     * @param type  原数据改变的类型
+     * @param index 更改的下标
      */
-    public boolean onDataChanged(boolean addOrSubtract, int index) {
+    public boolean onDataChanged(ChangedType type, int index) {
         return false;
     }
 
@@ -88,7 +88,6 @@ abstract class EffectDrawer {
     FloatingBar getBar() {
         return bar;
     }
-
 
 
     /**
@@ -126,5 +125,22 @@ abstract class EffectDrawer {
         else if (orig < expectation) i = orig + s;
         else i = orig;
         return i;
+    }
+
+    /**
+     *
+     */
+    public enum ChangedType {
+
+        /**
+         * 插入
+         */
+        Inserted,
+
+        /**
+         * 移除
+         */
+        Removed,
+
     }
 }

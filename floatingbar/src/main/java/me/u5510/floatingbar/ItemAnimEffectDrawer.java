@@ -8,6 +8,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.u5510.floatingbar.EffectDrawer.ChangedType.*;
+
 /**
  * Created by u5510 on 2017/9/19.
  */
@@ -20,11 +22,10 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
     private boolean isEquals = false;
 
     /**
-     * 模式
-     * true：添加一个item
-     * false：移除一个item
+     * 改变数据类型
      */
-    private boolean addOrSubtract;
+    private ChangedType type;
+
 
     /**
      * 被操作item的下标
@@ -47,10 +48,9 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public boolean onDataChanged(boolean addOrSubtract, int index) {
+    public boolean onDataChanged(ChangedType type, int index) {
         this.index = index;
-        this.addOrSubtract = addOrSubtract;
-
+        this.type = type;
 
         updateExpectationItem();
         updateItem();
@@ -80,10 +80,13 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
      * 更新实际的值
      */
     private void updateItem() {
-        if (addOrSubtract) {
-            item.add(index, expectationItem.get(index));
-        } else {
-            item.remove(index);
+        switch (type) {
+            case Inserted:
+                item.add(index, expectationItem.get(index));
+                break;
+            case Removed:
+                item.remove(index);
+                break;
         }
     }
 
@@ -133,14 +136,13 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
 
             Rect itemRect = item.get(i);
 
-            if (!addOrSubtract || i != index || isEquals) {
+            if (type == ChangedType.Removed || i != index || isEquals) {
                 canvas.drawRect(itemRect, p);
                 canvas.drawBitmap(fb.getBitmap(), itemRect.left, itemRect.top, p);
             }
         }
         return true;
     }
-
 
     /**
      * 判断当前item是否为被选中的并且返回适当颜色

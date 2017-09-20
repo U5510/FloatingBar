@@ -58,6 +58,11 @@ public class FloatingBar extends View {
     // TODO: 2017/9/17 变量
 
     /**
+     * 绘制body的样式
+     */
+    private BodyAnimEffectDrawer.BodyStyle bodyStyle;
+
+    /**
      * 数据操作模式
      */
     private DataMode dataMode;
@@ -217,6 +222,11 @@ public class FloatingBar extends View {
          * item数据模式
          */
         initDataMode(a);
+
+        /*
+         * 绘制body的样式
+         */
+        initBodyStyle(a);
     }
 
     private void initItemPadding(TypedArray a) {
@@ -256,6 +266,16 @@ public class FloatingBar extends View {
                 break;
             default:
                 setDataMode(DataMode.UNKNOWN);
+        }
+    }
+
+    private void initBodyStyle(TypedArray a) {
+        switch (a.getInteger(R.styleable.FloatingBar_bodyStyle, 0)) {
+            case 1:
+                bodyStyle = BodyAnimEffectDrawer.BodyStyle.Rect;
+                break;
+            default:
+                bodyStyle = BodyAnimEffectDrawer.BodyStyle.Normal;
         }
     }
 
@@ -504,9 +524,18 @@ public class FloatingBar extends View {
         return calculateItemRect(getItemSize(), index);
     }
 
-
+    /**
+     * 获取绘制阴影的paint
+     */
     protected Paint getZPaint() {
         return zPaint;
+    }
+
+    /**
+     * 获取绘制body的样式
+     */
+    protected BodyAnimEffectDrawer.BodyStyle getBodyStyle() {
+        return bodyStyle;
     }
 
     /**
@@ -914,13 +943,13 @@ public class FloatingBar extends View {
     // TODO: 2017/9/20 notify
 
     public void notifyItemInserted(int position) {
-        bodyAnimEffectDrawer.onDataChanged(true, position);
-        itemAnimEffectDrawer.onDataChanged(true, position);
+        bodyAnimEffectDrawer.onDataChanged(EffectDrawer.ChangedType.Inserted, position);
+        itemAnimEffectDrawer.onDataChanged(EffectDrawer.ChangedType.Inserted, position);
     }
 
     public void notifyItemRemoved(int position) {
-        bodyAnimEffectDrawer.onDataChanged(false, position);
-        itemAnimEffectDrawer.onDataChanged(false, position);
+        bodyAnimEffectDrawer.onDataChanged(EffectDrawer.ChangedType.Removed, position);
+        itemAnimEffectDrawer.onDataChanged(EffectDrawer.ChangedType.Removed, position);
     }
 
     public void notifyDataChanged() {
@@ -965,30 +994,35 @@ public class FloatingBar extends View {
 
     public void removeFloatingButton(int index) {
         if (dataMode == DataMode.INTERNAL) {
-            if (index > getItemSize() - 1) throw new IndexOutOfBoundsException();
             itemList.remove(index);
             notifyItemRemoved(index);
         } else e(DataMode.INTERNAL);
+    }
 
+    public void removeFloatingButtonAll(List<FloatingButton> fbs) {
+        for (FloatingButton fb : fbs) {
+            removeFloatingButton(fb);
+        }
     }
 
     /**
-     * 删除列表中的所有相同的
+     * 删除列表中的所有相同的元素
      */
     public void removeFloatingButton(FloatingButton fb) {
-        List<Integer> same = new ArrayList<>();
-        for (int i = 0; i < getItemSize(); i++) {
-            if (getItem(i).equals(fb)) {
-                same.add(i);
-                break;
+        if (dataMode == DataMode.INTERNAL) {
+            List<Integer> same = new ArrayList<>();
+            for (int i = 0; i < getItemSize(); i++) {
+                if (getItem(i).equals(fb)) {
+                    same.add(i);
+                }
             }
-        }
-        if (same.size() != 0) {
-            for (Integer i : same) {
-                removeFloatingButton(i);
-                notifyItemRemoved(i);
+            if (same.size() != 0) {
+                for (Integer i : same) {
+                    removeFloatingButton(i);
+                    notifyItemRemoved(i);
+                }
             }
-        }
+        } else e(DataMode.INTERNAL);
     }
 
     /**
