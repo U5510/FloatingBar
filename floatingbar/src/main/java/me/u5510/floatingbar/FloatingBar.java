@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -209,7 +208,6 @@ public class FloatingBar extends View {
          * 阴影值
          */
         elevation = a.getDimensionPixelSize(R.styleable.FloatingBar_elevation, 8);
-        Log.d("test", "initAttrs: elevation:" + getElevation());
         /*
          * item的填充,默认都为20
          */

@@ -54,7 +54,6 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
         updateItem();
         checkSize();
 
-        Log.d("test", "onDataChanged: item: " + item + " expectationItem: " + expectationItem);
         isEquals = false;
         getBar().getHandler().sendEmptyMessageDelayed(1, 1);
         return true;
