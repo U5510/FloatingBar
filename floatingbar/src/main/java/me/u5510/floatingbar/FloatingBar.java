@@ -78,14 +78,14 @@ public class FloatingBar extends View {
     private int bodyColor;
 
     /**
-     * item的颜色
+     * icon的颜色
      */
-    private int itemColor;
+    private int iconColor;
 
     /**
-     * item被按下的颜色
+     * icon被按下的颜色
      */
-    private int itemColorSelected;
+    private int iconColorSelected;
 
     /**
      * 选中的item
@@ -112,9 +112,9 @@ public class FloatingBar extends View {
     private int itemPaddingBottom;
 
     /**
-     * 子项的大小
+     * icon的大小
      */
-    private int itemSize;
+    private int iconSize;
 
     /**
      * 是否采用自定义.9图片做为body背景
@@ -184,11 +184,11 @@ public class FloatingBar extends View {
         /*
           item颜色，
          */
-        itemColor = a.getColor(R.styleable.FloatingBar_itemColor, Color.parseColor("#26A69A"));
+        iconColor = a.getColor(R.styleable.FloatingBar_itemColor, Color.parseColor("#26A69A"));
         /*
          * item选中颜色，
          */
-        itemColorSelected = a.getColor(R.styleable.FloatingBar_itemColorSelected, Color.parseColor("#00796B"));
+        iconColorSelected = a.getColor(R.styleable.FloatingBar_itemColorSelected, Color.parseColor("#00796B"));
         /*
          * 方向 默认水平
          */
@@ -196,7 +196,7 @@ public class FloatingBar extends View {
         /*
          * item大小，默认60
          */
-        itemSize = a.getDimensionPixelSize(R.styleable.FloatingBar_itemSize, 60);
+        iconSize = a.getDimensionPixelSize(R.styleable.FloatingBar_itemSize, 60);
         /*
          * 是否启用自定义背景，默认否
          */
@@ -352,24 +352,24 @@ public class FloatingBar extends View {
     }
 
     /**
-     * 获取item的颜色
+     * 获取icon的颜色
      */
-    public int getItemColor() {
-        return itemColor;
+    public int getIconColor() {
+        return iconColor;
     }
 
     /**
-     * 获取item的尺寸
+     * 获取icon的尺寸
      */
-    public int getItemMeasure() {
-        return itemSize;
+    public int getIconSize() {
+        return iconSize;
     }
 
     /**
      * 获取item被选中的颜色
      */
-    public int getItemColorSelected() {
-        return itemColorSelected;
+    public int getIconColorSelected() {
+        return iconColorSelected;
     }
 
     /**
@@ -473,25 +473,35 @@ public class FloatingBar extends View {
         }
     }
 
+
     /**
      * 获取item的高度
-     *
-     * @param padding 包含/不包含item填充
      */
-    protected int getItemHeight(boolean padding) {
-        if (padding) return itemSize + itemPaddingTop + itemPaddingBottom;
-        else return itemSize;
+    protected int getItemHeight() {
+        return getIconSize();
     }
 
+    /**
+     * 获取item的高度 带填充
+     */
+    protected int getItemHeight(boolean padding) {
+        if (padding) return getItemHeight() + itemPaddingTop + itemPaddingBottom;
+        else return getItemHeight();
+    }
 
     /**
      * 获取item的宽度
-     *
-     * @param padding 包含/不包含item填充
+     */
+    protected int getItemWidth() {
+        return getIconSize();
+    }
+
+    /**
+     * 获取item的宽度 带填充
      */
     protected int getItemWidth(boolean padding) {
-        if (padding) return itemSize + itemPaddingLeft + itemPaddingRight;
-        else return itemSize;
+        if (padding) return getItemWidth() + itemPaddingLeft + itemPaddingRight;
+        else return getItemWidth();
     }
 
     /**
@@ -554,9 +564,9 @@ public class FloatingBar extends View {
      */
     protected int calculateBodyHeight(int size) {
         if (isOrientation())
-            return itemPaddingTop + itemSize + itemPaddingBottom + getPaddingTop() + getPaddingBottom();
+            return getItemHeight(true) + getPaddingTop() + getPaddingBottom();
         else
-            return (itemSize + itemPaddingTop + itemPaddingBottom) * size + getPaddingTop() + getPaddingBottom();
+            return getItemHeight(true) * size + getPaddingTop() + getPaddingBottom();
     }
 
     /**
@@ -567,9 +577,9 @@ public class FloatingBar extends View {
      */
     protected int calculateBodyWidth(int size) {
         if (isOrientation())
-            return (itemPaddingLeft + itemPaddingRight + itemSize) * size + getPaddingLeft() + getPaddingRight();
+            return getItemWidth(true) * size + getPaddingLeft() + getPaddingRight();
         else
-            return itemSize + itemPaddingLeft + itemPaddingRight + getPaddingLeft() + getPaddingRight();
+            return getItemWidth(true) + getPaddingLeft() + getPaddingRight();
 
     }
 
@@ -729,7 +739,8 @@ public class FloatingBar extends View {
         body.right -= getPaddingRight();
         body.bottom -= getPaddingBottom();
         int l, t, r, b, p;
-        int w = getItemWidth(false);
+        int w = getItemWidth();
+        int h = getItemWidth();
         if (isOrientation()) {
             p = ((body.right - body.left) / size - w) / 2;
             l = body.left + p + (w + 2 * p) * index;
@@ -737,11 +748,11 @@ public class FloatingBar extends View {
             r = l + w;
             b = body.bottom - getItemPaddingBottom();
         } else {
-            p = ((body.bottom - body.top) / size - w) / 2;
+            p = ((body.bottom - body.top) / size - h) / 2;
             l = body.left + getItemPaddingLeft();
-            t = body.top + p + (w + 2 * p) * index;
+            t = body.top + p + (h + 2 * p) * index;
             r = body.right - getItemPaddingRight();
-            b = t + w;
+            b = t + h;
         }
         return new Rect(l, t, r, b);
     }

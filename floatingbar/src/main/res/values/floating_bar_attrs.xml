@@ -53,6 +53,5 @@
             <enum name="rect" value="1"/>
         </attr>
 
-
     </declare-styleable>
 </resources>

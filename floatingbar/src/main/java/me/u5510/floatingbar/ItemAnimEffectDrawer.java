@@ -8,8 +8,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.u5510.floatingbar.EffectDrawer.ChangedType.*;
-
 /**
  * Created by u5510 on 2017/9/19.
  */
@@ -148,9 +146,9 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
      * 判断当前item是否为被选中的并且返回适当颜色
      */
     private int getItemBitmapColor(int index) {
-        int itemSelected = getBar().getItemSelected();
-        if (itemSelected != -1 && itemSelected == index) return getBar().getItemColorSelected();
-        else return getBar().getItemColor();
+        int iconSelected = getBar().getItemSelected();
+        if (iconSelected != -1 && iconSelected == index) return getBar().getIconColorSelected();
+        else return getBar().getIconColor();
     }
 
     /**
@@ -159,7 +157,7 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
     private FloatingButton loadBitmap(int index) {
         FloatingButton fb = getBar().getItem(index);
         if (fb.getBitmap() == null)
-            fb.setBitmap(getBar().loadBitmap(getBar().getItemMeasure(), getItemBitmapColor(index), fb.getSrc()));
+            fb.setBitmap(getBar().loadBitmap(getBar().getIconSize(), getItemBitmapColor(index), fb.getSrc()));
         return fb;
     }
 
