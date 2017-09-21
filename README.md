@@ -37,7 +37,7 @@ java
 ```java
 FloatingBar fb = (FloatingBar)FindViewById(R.id.fb);
 
-FloatingButton btn = new FloatingButton(int src, String tag,OnItemClickListener listener);
+FloatingButton btn = new floatingButton(int src, String tag,OnItemClickListener listener);
 
 fb.addFloatingButton(btn);
 ```
