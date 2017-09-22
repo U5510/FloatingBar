@@ -35,11 +35,41 @@ xml
 
 java
 ```java
-FloatingBar fb = (FloatingBar)findViewById(R.id.fb);
+@Override
+protected void onCreate(Bundle savedInstanceState) {
 
-FloatingButton btn = new FloatingButton(int src, String tag,OnItemClickListener listener);
+    ...
 
-fb.addFloatingButton(btn);
+    FloatingBar fb = (FloatingBar)findViewById(R.id.fb);
+
+    FloatingButton btn = new FloatingButton(int src, String tag, OnItemClickListener listener);
+
+    fb.setOnLoaded(new OnLoaded() {
+        @Override
+        public void onLoaded() {
+            fb.add(btn);
+        }
+    });
+}
+```
+
+```java
+public class MainActivity extends MapActivity implements OnBodyClickListener{
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        ...
+        FloatingBar fb = (FloatingBar)findViewById(R.id.fb);
+	FloatingButton btn = new FloatingButton(R.drawable.btn, "btn");
+	fb.setOnBodyClickListener(this);
+    }
+
+    @Override
+    public void onClick(String tag) {
+         if (tag.equals("btn")){
+	 }
+    }
+}
 ```
   
 属性:
