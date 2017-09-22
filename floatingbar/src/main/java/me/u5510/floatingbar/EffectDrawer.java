@@ -138,7 +138,7 @@ abstract class EffectDrawer {
                 DataChangedType type = (DataChangedType) msg.obj;
                 dataChanged(type.getType(), type.getIndex());
             } else {
-                m.sendMessage(msg);
+                m.sendMessage(m.obtainMessage());
             }
         }
     };
