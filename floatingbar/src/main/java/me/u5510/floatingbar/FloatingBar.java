@@ -54,6 +54,11 @@ public class FloatingBar extends View {
      */
     private ItemAnimEffectDrawer itemAnimEffectDrawer;
 
+    /**
+     * 点击监听
+     */
+    private OnBodyClickListener onBodyClickListener;
+
     // TODO: 2017/9/17 变量
 
     /**
@@ -769,6 +774,10 @@ public class FloatingBar extends View {
 
     // TODO: 2017/9/17
 
+    public void setOnBodyClickListener(OnBodyClickListener onBodyClickListener) {
+        this.onBodyClickListener = onBodyClickListener;
+    }
+
     /**
      * 设置Gravity
      */
@@ -903,41 +912,31 @@ public class FloatingBar extends View {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
 
-        TouchPoint tp = new TouchPoint(event.getX(), event.getY());
+        final TouchPoint tp = new TouchPoint(event.getX(), event.getY());
 
-        boolean insideBody = tp.isInsideRect(getBodyRect());
+        final boolean insideBody = tp.isInsideRect(getBodyRect());
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (insideBody) {
-                    touchPoint.setTouchPoint(tp);
+        final int action = event.getAction();
 
+        if (insideBody) {
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_UP:
                     for (int i = 0; i < getItemSize(); i++) {
-                        if (getTouchPoint().isInsideRect(itemAddPadding(getItemRect(i)))) {
-                            OnItemClickListener o = getItem(i).getOnItemClickListener();
-                            if (null != o) o.onClickDown();
+                        if (tp.isInsideRect(itemAddPadding(getItemRect(i)))) {
+                            FloatingButton fb = getItem(i);
+                            if (onBodyClickListener != null)
+                                onBodyClickListener.onClick(fb.getTag());
+
+                            OnItemClickListener o = fb.getOnItemClickListener();
+                            if (o != null) o.onClick();
                         }
                     }
                     return true;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (insideBody) {
-
-                    for (int i = 0; i < getItemSize(); i++) {
-                        if (getTouchPoint().isInsideRect(itemAddPadding(getItemRect(i)))) {
-                            setItemSelected(i);
-                            OnItemClickListener o = getItem(i).getOnItemClickListener();
-                            if (null != o) o.onClickDown();
-                        }
-                    }
-
-                    getTouchPoint().reset();
-                    return true;
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
+            }
         }
         return false;
     }

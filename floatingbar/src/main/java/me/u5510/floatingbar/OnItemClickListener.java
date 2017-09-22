@@ -6,8 +6,6 @@ package me.u5510.floatingbar;
 
 public interface OnItemClickListener {
 
-    void onClickDown();
-
-    void onClickUp();
+    void onClick();
 
 }
