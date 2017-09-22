@@ -778,6 +778,9 @@ public class FloatingBar extends View {
         this.onBodyClickListener = onBodyClickListener;
     }
 
+    /**
+     * 设置首次完成加载view接口
+     */
     public void setOnLoaded(OnLoaded onLoaded) {
         this.onLoaded = onLoaded;
     }
@@ -803,7 +806,6 @@ public class FloatingBar extends View {
     public void resetItemSelected() {
         setItemSelected(-1);
     }
-
 
     /**
      * 限制一个数
