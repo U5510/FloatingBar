@@ -2,6 +2,8 @@ package me.u5510.floatingbar;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 
 /**
@@ -53,8 +55,14 @@ abstract class EffectDrawer {
      * @param type  原数据改变的类型
      * @param index 更改的下标
      */
-    public boolean onDataChanged(ChangedType type, int index) {
-        return false;
+    public void onDataChanged(ChangedType type, int index) {
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = new DataChangedType(type, index);
+        m.sendMessage(msg);
+    }
+
+    public void dataChanged(ChangedType type, int index) {
     }
 
     /**
@@ -83,10 +91,6 @@ abstract class EffectDrawer {
      */
     public boolean onDraw(Canvas canvas) {
         return false;
-    }
-
-    FloatingBar getBar() {
-        return bar;
     }
 
 
@@ -127,9 +131,40 @@ abstract class EffectDrawer {
         return i;
     }
 
-    /**
-     *
-     */
+    private Handler m = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (getBar().isFirstLoadFinished()) {
+                DataChangedType type = (DataChangedType) msg.obj;
+                dataChanged(type.getType(), type.getIndex());
+            } else {
+                m.sendMessage(msg);
+            }
+        }
+    };
+
+    FloatingBar getBar() {
+        return bar;
+    }
+
+    private class DataChangedType {
+        private ChangedType type;
+        private int index;
+
+        public DataChangedType(ChangedType type, int index) {
+            this.type = type;
+            this.index = index;
+        }
+
+        public ChangedType getType() {
+            return type;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+    }
+
     public enum ChangedType {
 
         /**

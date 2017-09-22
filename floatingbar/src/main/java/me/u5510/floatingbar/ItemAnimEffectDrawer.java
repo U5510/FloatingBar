@@ -46,7 +46,7 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public boolean onDataChanged(ChangedType type, int index) {
+    public void dataChanged(ChangedType type, int index) {
         this.index = index;
         this.type = type;
 
@@ -55,8 +55,7 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
         checkSize();
 
         isEquals = false;
-        getBar().getHandler().sendEmptyMessageDelayed(1, 1);
-        return true;
+        getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
     }
 
     /**

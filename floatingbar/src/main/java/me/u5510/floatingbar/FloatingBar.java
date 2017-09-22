@@ -62,6 +62,11 @@ public class FloatingBar extends View {
     // TODO: 2017/9/17 变量
 
     /**
+     * 首次加载完成
+     */
+    private boolean firstLoadFinished = false;
+
+    /**
      * 绘制body的样式
      */
     private BodyAnimEffectDrawer.BodyStyle bodyStyle;
@@ -143,19 +148,19 @@ public class FloatingBar extends View {
      */
     private TouchPoint touchPoint = new TouchPoint(0.0f, 0.0f);
 
-    private Handler handler = new Handler() {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (!(bodyAnimEffectDrawer.onHandler()
                     & itemAnimEffectDrawer.onHandler())) {
                 postInvalidate();
-                handler.sendEmptyMessageDelayed(1, 1);
+                mHandler.sendEmptyMessageDelayed(1, 1);
             }
         }
     };
 
 
-    // TODO: 2017/9/17 构造方法 
+    // TODO: 2017/9/17 构造方法
 
     public FloatingBar(Context context) {
         this(context, null);
@@ -326,13 +331,19 @@ public class FloatingBar extends View {
 
     // TODO: 2017/9/17 Get
 
+    /**
+     * 获取是否首次加载成功
+     */
+    public boolean isFirstLoadFinished() {
+        return firstLoadFinished;
+    }
 
     public DataMode getDataMode() {
         return dataMode;
     }
 
-    public Handler getHandler() {
-        return handler;
+    Handler getMyHandler() {
+        return mHandler;
     }
 
     public void setDataMode(DataMode dataMode) {
@@ -378,7 +389,7 @@ public class FloatingBar extends View {
     /**
      * 获取paint
      */
-    protected Paint getPaint() {
+    Paint getPaint() {
         return paint;
     }
 
@@ -386,7 +397,7 @@ public class FloatingBar extends View {
     /**
      * 获取触摸的坐标
      */
-    protected TouchPoint getTouchPoint() {
+    TouchPoint getTouchPoint() {
         return touchPoint;
     }
 
@@ -394,14 +405,14 @@ public class FloatingBar extends View {
     /**
      * 获取布局的宽度
      */
-    public int getWidth_() {
+    int getWidth_() {
         return getWidth() - elevation;
     }
 
     /**
      * 获取布局的高度
      */
-    public int getHeight_() {
+    int getHeight_() {
         return getHeight() - elevation;
     }
 
@@ -424,28 +435,28 @@ public class FloatingBar extends View {
     /**
      * 获取item的左填充
      */
-    protected int getItemPaddingLeft() {
+   int getItemPaddingLeft() {
         return itemPaddingLeft;
     }
 
     /**
      * 获取item的右填充
      */
-    protected int getItemPaddingRight() {
+    int getItemPaddingRight() {
         return itemPaddingRight;
     }
 
     /**
      * 获取item的顶部填充
      */
-    protected int getItemPaddingTop() {
+    int getItemPaddingTop() {
         return itemPaddingTop;
     }
 
     /**
      * 获取item的底部填充
      */
-    protected int getItemPaddingBottom() {
+   int getItemPaddingBottom() {
         return itemPaddingBottom;
     }
 
@@ -454,21 +465,21 @@ public class FloatingBar extends View {
      *
      * @return 水平/垂直
      */
-    protected boolean isOrientation() {
+    boolean isOrientation() {
         return orientation;
     }
 
     /**
      * 获取body的位置
      */
-    protected Gravity getGravity() {
+    Gravity getGravity() {
         return gravity;
     }
 
     /**
      * 获取draw中圆的半径
      */
-    protected int getRadius() {
+   int getRadius() {
         if (orientation) {
             return getHeight_() / 2;
         } else {
@@ -480,14 +491,14 @@ public class FloatingBar extends View {
     /**
      * 获取item的高度
      */
-    protected int getItemHeight() {
+    int getItemHeight() {
         return getIconSize();
     }
 
     /**
      * 获取item的高度 带填充
      */
-    protected int getItemHeight(boolean padding) {
+    int getItemHeight(boolean padding) {
         if (padding) return getItemHeight() + itemPaddingTop + itemPaddingBottom;
         else return getItemHeight();
     }
@@ -495,14 +506,14 @@ public class FloatingBar extends View {
     /**
      * 获取item的宽度
      */
-    protected int getItemWidth() {
+    int getItemWidth() {
         return getIconSize();
     }
 
     /**
      * 获取item的宽度 带填充
      */
-    protected int getItemWidth(boolean padding) {
+    int getItemWidth(boolean padding) {
         if (padding) return getItemWidth() + itemPaddingLeft + itemPaddingRight;
         else return getItemWidth();
     }
@@ -510,21 +521,21 @@ public class FloatingBar extends View {
     /**
      * 获取body的高度
      */
-    protected int getBodyHeight() {
+    int getBodyHeight() {
         return calculateBodyHeight(getItemSize());
     }
 
     /**
      * 获取body的宽
      */
-    protected int getBodyWidth() {
+    int getBodyWidth() {
         return calculateBodyWidth(getItemSize());
     }
 
     /**
      * 获取body所在的矩形
      */
-    protected Rect getBodyRect() {
+   Rect getBodyRect() {
         return calculateBodyRect(getItemSize());
     }
 
@@ -533,21 +544,21 @@ public class FloatingBar extends View {
      *
      * @param index 下标
      */
-    protected Rect getItemRect(int index) {
+   Rect getItemRect(int index) {
         return calculateItemRect(getItemSize(), index);
     }
 
     /**
      * 获取绘制阴影的paint
      */
-    protected Paint getZPaint() {
+    Paint getZPaint() {
         return zPaint;
     }
 
     /**
      * 获取绘制body的样式
      */
-    protected BodyAnimEffectDrawer.BodyStyle getBodyStyle() {
+    public BodyAnimEffectDrawer.BodyStyle getBodyStyle() {
         return bodyStyle;
     }
 
@@ -565,7 +576,7 @@ public class FloatingBar extends View {
      *
      * @param size 子项的数量
      */
-    protected int calculateBodyHeight(int size) {
+    int calculateBodyHeight(int size) {
         if (isOrientation())
             return getItemHeight(true) + getPaddingTop() + getPaddingBottom();
         else
@@ -578,7 +589,7 @@ public class FloatingBar extends View {
      * @param size 这个值一般为子项的数量 list.size()
      *             意味着可以获取想要的值
      */
-    protected int calculateBodyWidth(int size) {
+    int calculateBodyWidth(int size) {
         if (isOrientation())
             return getItemWidth(true) * size + getPaddingLeft() + getPaddingRight();
         else
@@ -592,7 +603,7 @@ public class FloatingBar extends View {
      * @param size 这个值一般为子项的数量 list.size()
      *             意味着可以获取想要的值
      */
-    protected Rect calculateBodyRect(int size) {
+    Rect calculateBodyRect(int size) {
         int l, t, r, b;
         int diameter = getRadius() * 2;
         if (isOrientation()) {
@@ -662,7 +673,7 @@ public class FloatingBar extends View {
      * @param b 第二个数
      * @param c 被比较的数(第三个数)
      */
-    private int calculateDifferential(int a, int b, int c) {
+    int calculateDifferential(int a, int b, int c) {
         int differential;
 
         if (a > b) differential = a - b;
@@ -681,7 +692,7 @@ public class FloatingBar extends View {
      *              意味着可以获取想要的值
      * @param index 需要得到item的下标
      */
-    protected Rect calculateItemRect(int size, int index) {
+    Rect calculateItemRect(int size, int index) {
         Rect item;
         if (Gravity.FILL != getGravity()) {
             if (isOrientation()) {
@@ -764,7 +775,7 @@ public class FloatingBar extends View {
      * 内部方法
      * 添加item四周填充
      */
-    protected Rect itemAddPadding(Rect item) {
+    Rect itemAddPadding(Rect item) {
         int l = item.left - getItemPaddingLeft();
         int t = item.top - getItemPaddingTop();
         int r = item.right + getItemPaddingRight();
@@ -774,6 +785,10 @@ public class FloatingBar extends View {
 
     // TODO: 2017/9/17
 
+    /**
+     * 设置监听
+     * @param onBodyClickListener
+     */
     public void setOnBodyClickListener(OnBodyClickListener onBodyClickListener) {
         this.onBodyClickListener = onBodyClickListener;
     }
@@ -808,7 +823,7 @@ public class FloatingBar extends View {
      * @param min  最小值
      * @param max  最大值
      */
-    protected int limitInteger(int orig, int min, int max) {
+    int limitInteger(int orig, int min, int max) {
         if (max <= min) throw new FloatingBarException();
         if (orig < min) orig = min;
         else if (orig > max) orig = max;
@@ -819,7 +834,7 @@ public class FloatingBar extends View {
     /**
      * 重置 paint
      */
-    protected Paint resetPaint() {
+    Paint resetPaint() {
         getPaint().reset();
         getPaint().setFlags(Paint.ANTI_ALIAS_FLAG);
         return getPaint();
@@ -832,7 +847,7 @@ public class FloatingBar extends View {
      * @param color 颜色
      * @param src   资源位置
      */
-    protected Bitmap loadBitmap(int size, int color, int src) {
+    Bitmap loadBitmap(int size, int color, int src) {
         return BitmapUtil.changeBitmapColor(BitmapUtil.changeBitmapSize(BitmapFactory.decodeResource(getResources(), src), size, size), color);
     }
 
@@ -944,6 +959,7 @@ public class FloatingBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (!firstLoadFinished) firstLoadFinished = true;
         bodyAnimEffectDrawer.onDraw(canvas);
         itemAnimEffectDrawer.onDraw(canvas);
     }

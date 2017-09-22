@@ -32,12 +32,11 @@ class BodyAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public boolean onDataChanged(ChangedType type, int index) {
+    public void dataChanged(ChangedType type, int index) {
         initBodyRect();
         expectationBody = getBar().getBodyRect();
         isEquals = false;
-        getBar().getHandler().sendEmptyMessageDelayed(1, 1);
-        return true;
+        getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
     }
 
     /**
