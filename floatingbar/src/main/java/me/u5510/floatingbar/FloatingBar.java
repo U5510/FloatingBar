@@ -42,7 +42,7 @@ import java.util.List;
 
 public class FloatingBar extends View {
 
-    // TODO: 2017/9/19  effect drawer
+    // TODO: 2017/9/19 other
 
     /**
      * 绘画body以及增减动画
@@ -59,12 +59,17 @@ public class FloatingBar extends View {
      */
     private OnBodyClickListener onBodyClickListener;
 
+    /**
+     * 初次加载完成回调
+     */
+    private OnLoaded onLoaded;
+
     // TODO: 2017/9/17 变量
 
     /**
-     * 首次加载完成
+     * 初次加载完成
      */
-    private boolean firstLoadFinished = false;
+    private boolean firstLoaded = false;
 
     /**
      * 绘制body的样式
@@ -143,16 +148,12 @@ public class FloatingBar extends View {
 
     private Paint zPaint = new Paint();
 
-    /**
-     * 屏幕触摸的点
-     */
-    private TouchPoint touchPoint = new TouchPoint(0.0f, 0.0f);
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (!(bodyAnimEffectDrawer.onHandler()
-                    & itemAnimEffectDrawer.onHandler())) {
+            if (!(bodyAnimEffectDrawer.onAdvance()
+                    & itemAnimEffectDrawer.onAdvance())) {
                 postInvalidate();
                 mHandler.sendEmptyMessageDelayed(1, 1);
             }
@@ -331,13 +332,6 @@ public class FloatingBar extends View {
 
     // TODO: 2017/9/17 Get
 
-    /**
-     * 获取是否首次加载成功
-     */
-    public boolean isFirstLoadFinished() {
-        return firstLoadFinished;
-    }
-
     public DataMode getDataMode() {
         return dataMode;
     }
@@ -395,14 +389,6 @@ public class FloatingBar extends View {
 
 
     /**
-     * 获取触摸的坐标
-     */
-    TouchPoint getTouchPoint() {
-        return touchPoint;
-    }
-
-
-    /**
      * 获取布局的宽度
      */
     int getWidth_() {
@@ -435,7 +421,7 @@ public class FloatingBar extends View {
     /**
      * 获取item的左填充
      */
-   int getItemPaddingLeft() {
+    int getItemPaddingLeft() {
         return itemPaddingLeft;
     }
 
@@ -456,7 +442,7 @@ public class FloatingBar extends View {
     /**
      * 获取item的底部填充
      */
-   int getItemPaddingBottom() {
+    int getItemPaddingBottom() {
         return itemPaddingBottom;
     }
 
@@ -479,7 +465,7 @@ public class FloatingBar extends View {
     /**
      * 获取draw中圆的半径
      */
-   int getRadius() {
+    int getRadius() {
         if (orientation) {
             return getHeight_() / 2;
         } else {
@@ -535,7 +521,7 @@ public class FloatingBar extends View {
     /**
      * 获取body所在的矩形
      */
-   Rect getBodyRect() {
+    Rect getBodyRect() {
         return calculateBodyRect(getItemSize());
     }
 
@@ -544,7 +530,7 @@ public class FloatingBar extends View {
      *
      * @param index 下标
      */
-   Rect getItemRect(int index) {
+    Rect getItemRect(int index) {
         return calculateItemRect(getItemSize(), index);
     }
 
@@ -787,10 +773,13 @@ public class FloatingBar extends View {
 
     /**
      * 设置监听
-     * @param onBodyClickListener
      */
     public void setOnBodyClickListener(OnBodyClickListener onBodyClickListener) {
         this.onBodyClickListener = onBodyClickListener;
+    }
+
+    public void setOnLoaded(OnLoaded onLoaded) {
+        this.onLoaded = onLoaded;
     }
 
     /**
@@ -828,6 +817,13 @@ public class FloatingBar extends View {
         if (orig < min) orig = min;
         else if (orig > max) orig = max;
         return orig;
+    }
+
+    private void setFirstLoaded() {
+        if (!firstLoaded) {
+            firstLoaded = true;
+            if (onLoaded != null) onLoaded.onLoaded();
+        }
     }
 
 
@@ -950,16 +946,15 @@ public class FloatingBar extends View {
                             if (o != null) o.onClick();
                         }
                     }
-                    return true;
             }
-        }
-        return false;
+            return true;
+        } else return false;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!firstLoadFinished) firstLoadFinished = true;
+        setFirstLoaded();
         bodyAnimEffectDrawer.onDraw(canvas);
         itemAnimEffectDrawer.onDraw(canvas);
     }
@@ -977,15 +972,15 @@ public class FloatingBar extends View {
     }
 
     public void notifyDataChanged() {
-        bodyAnimEffectDrawer.dataChanged();
-        itemAnimEffectDrawer.dataChanged();
+        bodyAnimEffectDrawer.onDataChanged();
+        itemAnimEffectDrawer.onDataChanged();
     }
 
 
     // TODO: 2017/9/17
 
 
-    public void moveItem(int fromPosition, int toPosition) {
+    public void move(int fromPosition, int toPosition) {
         if (dataMode == DataMode.INTERNAL) {
             FloatingButton fb = itemList.remove(fromPosition);
             notifyItemRemoved(fromPosition);
@@ -994,7 +989,7 @@ public class FloatingBar extends View {
         } else e(DataMode.INTERNAL);
     }
 
-    public void addFloatingButton(FloatingButton floatingButton) {
+    public void add(FloatingButton floatingButton) {
         if (dataMode == DataMode.INTERNAL) {
             itemList.add(floatingButton);
             notifyItemInserted(getItemSize() - 1);
@@ -1002,7 +997,7 @@ public class FloatingBar extends View {
 
     }
 
-    public void addFloatingButton(int index, FloatingButton floatingButton) {
+    public void add(int index, FloatingButton floatingButton) {
         if (dataMode == DataMode.INTERNAL) {
             itemList.add(index, floatingButton);
             notifyItemInserted(index);
@@ -1010,44 +1005,13 @@ public class FloatingBar extends View {
 
     }
 
-    public void addFloatingButtonAll(List<FloatingButton> fbs) {
-        for (FloatingButton fb : fbs) {
-            addFloatingButton(fb);
-        }
-    }
-
-    public void removeFloatingButton(int index) {
+    public void remove(int index) {
         if (dataMode == DataMode.INTERNAL) {
             itemList.remove(index);
             notifyItemRemoved(index);
         } else e(DataMode.INTERNAL);
     }
 
-    public void removeFloatingButtonAll(List<FloatingButton> fbs) {
-        for (FloatingButton fb : fbs) {
-            removeFloatingButton(fb);
-        }
-    }
-
-    /**
-     * 删除列表中的所有相同的元素
-     */
-    public void removeFloatingButton(FloatingButton fb) {
-        if (dataMode == DataMode.INTERNAL) {
-            List<Integer> same = new ArrayList<>();
-            for (int i = 0; i < getItemSize(); i++) {
-                if (getItem(i).equals(fb)) {
-                    same.add(i);
-                }
-            }
-            if (same.size() != 0) {
-                for (Integer i : same) {
-                    removeFloatingButton(i);
-                    notifyItemRemoved(i);
-                }
-            }
-        } else e(DataMode.INTERNAL);
-    }
 
     /**
      * 清空
@@ -1060,7 +1024,7 @@ public class FloatingBar extends View {
 
     }
 
-    public void setItemList(List<FloatingButton> fbs) {
+    public void setList(List<FloatingButton> fbs) {
         if (dataMode == DataMode.EXTERNAL) {
             itemList.clear();
             itemList = fbs;

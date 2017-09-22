@@ -21,6 +21,10 @@ public class FloatingButton {
         this.src = src;
         this.onItemClickListener = onItemClickListener;
     }
+    public FloatingButton(int src, String tag) {
+        this.tag = tag;
+        this.src = src;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -6,5 +6,5 @@ package me.u5510.floatingbar;
 
 public interface OnBodyClickListener {
 
-    boolean onClick(String tag);
+    void onClick(String tag);
 }

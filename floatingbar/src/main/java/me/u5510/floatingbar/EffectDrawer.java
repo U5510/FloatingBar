@@ -23,7 +23,7 @@ import android.view.MotionEvent;
  * |             |                       onHandler()    --------/
  * |             |                           |
  * |             |                           |
- * |             |                         true
+ * |             |                          true
  * |             |                           |
  * |             |                           |
  * |            END                         END
@@ -56,20 +56,28 @@ abstract class EffectDrawer {
      * @param index 更改的下标
      */
     public void onDataChanged(ChangedType type, int index) {
-        Message msg = new Message();
-        msg.what = 0;
-        msg.obj = new DataChangedType(type, index);
-        m.sendMessage(msg);
-    }
-
-    public void dataChanged(ChangedType type, int index) {
+        dataChanged(type, index);
     }
 
     /**
      * 触发条件
+     * 监听数据改变
      * 直接更改实际值，无动画
      */
-    public void dataChanged() {
+    public void onDataChanged() {
+        dataChanged(ChangedType.Unknown, 0);
+    }
+
+
+    /**
+     * 绘画
+     *
+     * @param canvas 画板
+     */
+    public void onDraw(Canvas canvas) {
+        if (getBar().getItemSize() > 0) {
+            draw(canvas);
+        }
     }
 
     /**
@@ -79,18 +87,18 @@ abstract class EffectDrawer {
      * true：结束循环
      * false: 继续循环
      */
-    public boolean onHandler() {
-        return false;
+    public boolean onAdvance() {
+        return advance();
     }
 
-    /**
-     * 绘画
-     *
-     * @param canvas 画板
-     * @return 判断是否成功
-     */
-    public boolean onDraw(Canvas canvas) {
-        return false;
+    void dataChanged(ChangedType type, int index) {
+    }
+
+    void draw(Canvas canvas) {
+    }
+
+    boolean advance() {
+        return true;
     }
 
 
@@ -131,38 +139,9 @@ abstract class EffectDrawer {
         return i;
     }
 
-    private Handler m = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (getBar().isFirstLoadFinished()) {
-                DataChangedType type = (DataChangedType) msg.obj;
-                dataChanged(type.getType(), type.getIndex());
-            } else {
-                m.sendMessage(m.obtainMessage());
-            }
-        }
-    };
 
     FloatingBar getBar() {
         return bar;
-    }
-
-    private class DataChangedType {
-        private ChangedType type;
-        private int index;
-
-        public DataChangedType(ChangedType type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-
-        public ChangedType getType() {
-            return type;
-        }
-
-        public int getIndex() {
-            return index;
-        }
     }
 
     public enum ChangedType {
@@ -176,6 +155,8 @@ abstract class EffectDrawer {
          * 移除
          */
         Removed,
+
+        Unknown,
 
     }
 }

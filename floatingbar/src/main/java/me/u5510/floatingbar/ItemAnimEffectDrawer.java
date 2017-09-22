@@ -44,32 +44,26 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
         super(bar);
     }
 
-
     @Override
-    public void dataChanged(ChangedType type, int index) {
+    void dataChanged(ChangedType type, int index) {
         this.index = index;
         this.type = type;
+        if (type==ChangedType.Unknown){
+            List<Rect> a = new ArrayList<>();
+            for (int i = 0; i < getBar().getItemSize(); i++) {
+                a.add(getBar().getItemRect(i));
+            }
+            item.clear();
+            item.addAll(a);
+            getBar().invalidate();
+        }else {
+            updateExpectationItem();
+            updateItem();
+            checkSize();
 
-        updateExpectationItem();
-        updateItem();
-        checkSize();
-
-        isEquals = false;
-        getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
-    }
-
-    /**
-     * 在不知道做了什么改变的情况下更新值
-     */
-    @Override
-    public void dataChanged() {
-        List<Rect> a = new ArrayList<>();
-        for (int i = 0; i < getBar().getItemSize(); i++) {
-            a.add(getBar().getItemRect(i));
+            isEquals = false;
+            getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
         }
-        item.clear();
-        item.addAll(a);
-        getBar().invalidate();
     }
 
     /**
@@ -108,7 +102,7 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public boolean onHandler() {
+    boolean advance() {
         if (!isEquals) {
             for (int i = 0; i < getBar().getItemSize(); i++) {
                 item.set(i, gradatimUpdate(item.get(i), expectationItem.get(i), 7));
@@ -120,11 +114,9 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
     }
 
     @Override
-    public boolean onDraw(Canvas canvas) {
-        if (getBar().getItemSize() == 0) return false;
+    public void draw(Canvas canvas) {
         int itemSize = getBar().getItemSize();
         for (int i = 0; i < itemSize; i++) {
-
             Paint p = getBar().resetPaint();
             p.setColor(getBar().getBodyColor());
 
@@ -137,7 +129,6 @@ public class ItemAnimEffectDrawer extends EffectDrawer {
                 canvas.drawBitmap(fb.getBitmap(), itemRect.left, itemRect.top, p);
             }
         }
-        return true;
     }
 
     /**

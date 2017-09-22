@@ -32,24 +32,20 @@ class BodyAnimEffectDrawer extends EffectDrawer {
 
 
     @Override
-    public void dataChanged(ChangedType type, int index) {
-        initBodyRect();
-        expectationBody = getBar().getBodyRect();
-        isEquals = false;
-        getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
-    }
-
-    /**
-     * 在不知道做了什么改变的情况下更新值
-     */
-    @Override
-    public void dataChanged() {
-        body = getBar().getBodyRect();
-        getBar().invalidate();
+    void dataChanged(ChangedType type, int index) {
+        if (type == ChangedType.Unknown) {
+            body = getBar().getBodyRect();
+            getBar().invalidate();
+        } else {
+            initBodyRect();
+            expectationBody = getBar().getBodyRect();
+            isEquals = false;
+            getBar().getMyHandler().sendEmptyMessageDelayed(1, 1);
+        }
     }
 
     @Override
-    public boolean onHandler() {
+    boolean advance() {
         if (!isEquals) {
             body = gradatimUpdate(body, expectationBody, 7);
             getBar().postInvalidate();
@@ -61,10 +57,8 @@ class BodyAnimEffectDrawer extends EffectDrawer {
     }
 
     @Override
-    public boolean onDraw(Canvas canvas) {
+    void draw(Canvas canvas) {
         initBodyRect();
-        if (getBar().getItemSize() == 0) return false;
-
         Paint paint = getPaint();
         Paint zPaint = getBar().getZPaint();
 
@@ -84,7 +78,7 @@ class BodyAnimEffectDrawer extends EffectDrawer {
                 case Rect:
                     canvas.drawRect(l + p, t + p, r - p, b - p, zPaint);
                     canvas.drawRect(l, t, r, b, paint);
-                    return true;
+                    break;
                 case Normal:
                 default:
                     if (isOrientation) {
@@ -106,7 +100,7 @@ class BodyAnimEffectDrawer extends EffectDrawer {
                         canvas.drawArc(l, b - _r * 2, r, b, 0, 180, true, paint);
                         canvas.drawRect(l, t + _r, r, b - _r, paint);
                     }
-                    return true;
+                    break;
             }
         }
     }
