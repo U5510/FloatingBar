@@ -20,24 +20,24 @@ dependencies {
 }
 ```
 
-一个最常规的例子:
+一个例子:
 ----
 xml
 ```xml
 <me.u5510.floatingbar.FloatingBar
     android:id="@+id/fb"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
+    app:gravity="center_horizontal"
     app:orientation="horizontal"
     app:changeDataMode="internal" />
 ```
 
 java
 ```java
-FloatingBar fb = (FloatingBar)FindViewById(R.id.fb);
+FloatingBar fb = (FloatingBar)findViewById(R.id.fb);
 
-FloatingButton btn = new floatingButton(int src, String tag,OnItemClickListener listener);
+FloatingButton btn = new FloatingButton(int src, String tag,OnItemClickListener listener);
 
 fb.addFloatingButton(btn);
 ```
